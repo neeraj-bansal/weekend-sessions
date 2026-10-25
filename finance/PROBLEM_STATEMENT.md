@@ -26,6 +26,7 @@ Build an autonomous **Multi-Agent Equity Research Team in Code** that completes 
 
 ### Requirement 1: The "JSON Rule" & Structured Output Contracts
 * **Rule 1 (Tools Return JSON)**: Every tool function MUST return a valid JSON string. The LLM framework feeds tool results to models as plain text; formatted JSON guarantees unambiguous numerical parsing and prevents type errors or hallucination.
+* **Rule 2 (Numbers Arrive as Numbers, Not Strings)**: In finance, returning `"$98.7B (+6% YoY)"` crashes programmatic trading filters (e.g., `revenue > 90e9`). All tools must deliver raw numeric values (e.g., `revenue: 98700000000`, `growth_pct: 0.06`).
 * **Final Machine-Readable Contract**: The system must export a comprehensive JSON object:
 
 ```json
