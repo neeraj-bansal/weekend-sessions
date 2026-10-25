@@ -88,7 +88,7 @@ def run_llm_inference(
                 "anthropic_version": "bedrock-2023-05-31",
                 "max_tokens": 2048,
                 "system": system_prompt,
-                "messages": [{"role": "user", "content": user_prompt}],
+                "messages": [{"role": "user", "content": [{"type": "text", "text": user_prompt}]}],
                 "temperature": 0.1,
             })
             resp = bedrock_client.invoke_model(modelId=model_id, body=body)

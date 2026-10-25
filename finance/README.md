@@ -5,6 +5,7 @@ An autonomous multi-agent equity research team in code that performs institution
 * 📋 [**`PROBLEM_STATEMENT.md`**](PROBLEM_STATEMENT.md): Full system specification, financial formulas, and architecture.
 * 🎓 [**`LEARN_AND_COLLABORATE.md`**](LEARN_AND_COLLABORATE.md): Learning guide and how to interact with Bob for maximum intuition.
 * 🗺️ [**`PLAN.md`**](PLAN.md): Step-by-step implementation roadmap across Phases 1 through 4.
+* ☁️ [**`DEPLOYMENT.md`**](DEPLOYMENT.md): Cloud deployment blueprint (Bedrock AgentCore, ECS Fargate, AWS Lambda).
 
 ---
 

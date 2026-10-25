@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 60-Second Multi-Agent Fundamental Stock Analyst on AWS Lambda behind API Gateway
+
+Globals:
+  Function:
+    Timeout: 60
+    MemorySize: 1024
+
+Parameters:
+  Architecture:
+    Type: String
+    Default: arm64
+    AllowedValues:
+      - arm64
+      - x86_64
+    Description: "Lambda CPU architecture. arm64 for Apple Silicon / AWS Graviton, x86_64 for Intel."
+  BedrockModelId:
+    Type: String
+    Default: us.amazon.nova-2-lite-v1:0
+    Description: "Bedrock model ID (e.g. us.amazon.nova-2-lite-v1:0 or global.anthropic.claude-sonnet-4-6)"
+
+Resources:
+  FinanceAnalysisApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'POST, GET, OPTIONS'"
+        AllowHeaders: "'Content-Type, X-Amz-Date, Authorization, X-Api-Key'"
+        AllowOrigin: "'*'"
+
+  FinanceAnalysisFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - !Ref Architecture
+      Environment:
+        Variables:
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          AWS_REGION: !Ref "AWS::Region"
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+                - bedrock:InvokeModelWithResponseStream
+              Resource:
+                - "arn:aws:bedrock:*::foundation-model/*"
+                - "arn:aws:bedrock:::foundation-model/*"
+                - !Sub "arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/*"
+      Events:
+        PostAnalyze:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FinanceAnalysisApi
+            Path: /analyze
+            Method: post
+        GetAnalyze:
+          Type: Api
+          Properties:
+            RestApiId: !Ref FinanceAnalysisApi
+            Path: /analyze/{ticker}
+            Method: get
+    Metadata:
+      DockerTag: v1
+      DockerContext: .
+      Dockerfile: Dockerfile.lambda
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway HTTPS endpoint URL for Fundamental Stock Analysis"
+    Value: !Sub "https://${FinanceAnalysisApi}.execute-api.${AWS::Region}.amazonaws.com/prod/analyze"
+  FunctionArn:
+    Description: "ARN of the Finance Analysis Lambda Function"
+    Value: !GetAtt FinanceAnalysisFunction.Arn

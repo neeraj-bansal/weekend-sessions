@@ -1,0 +1,14 @@
+FROM public.ecr.aws/lambda/python:3.13
+
+# Copy requirements into lambda task root
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
+
+# Install dependencies with pre-built binary wheels
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application packages and handler into task root and create finance module link
+COPY . ${LAMBDA_TASK_ROOT}
+RUN ln -s ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}/finance
+
+# Set Lambda Handler
+CMD [ "lambda_handler.lambda_handler" ]
