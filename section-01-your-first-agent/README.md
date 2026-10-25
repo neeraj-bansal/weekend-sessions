@@ -33,7 +33,7 @@ pip install -r requirements.txt
 uv sync
 ```
 
-Needs AWS credentials with Bedrock access (`us-west-2` recommended).
+Needs AWS credentials with Bedrock access (`us-east-1` recommended).
 
 ### Option B — Groq (no AWS account needed)
 

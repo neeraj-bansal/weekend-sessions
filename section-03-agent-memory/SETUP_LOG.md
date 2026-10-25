@@ -103,7 +103,7 @@ Keys used by section 3:
 | Key | Purpose |
 |---|---|
 | `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Bedrock (embeddings + LLM for mem0), AgentCore Memory |
-| `AWS_DEFAULT_REGION` | `us-west-2` |
+| `AWS_DEFAULT_REGION` | `us-east-1` |
 
 ---
 
@@ -113,7 +113,7 @@ Verified with the section venv:
 
 ```
 ✓ all imports OK  (strands, mem0, faiss, langchain, langgraph, langchain_aws, bedrock_agentcore, boto3)
-✓ Bedrock live: 'Hey there friend!'   (Claude Haiku 4.5, us-west-2)
+✓ Bedrock live: 'Hey there friend!'   (Claude Haiku 4.5, us-east-1)
 ✓ Mem0 FAISS: stored & retrieved → 'Favourite language is Python'
 ```
 

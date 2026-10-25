@@ -36,7 +36,7 @@ AWS replaced the old 12-month free tier for accounts created after 15 July 2025.
 
 In the console search bar open **Billing and Cost Management**, then **Free Tier**. You should see a banner saying *Your free plan account does not get charged* and a credit balance of about $100. The introduction text on that page may still mention 12 months. That text is out of date, so go by the banner and the credits.
 
-Also set your console region (top right) to **US West (Oregon) `us-west-2`**. We use that region for Bedrock throughout this guide.
+Also set your console region (top right) to **US East (N. Virginia) `us-east-1`**. We use that region for Bedrock throughout this guide.
 
 ---
 
@@ -92,7 +92,7 @@ aws configure
 |---|---|
 | AWS Access Key ID | The access key ID from Part 2 |
 | AWS Secret Access Key | The secret access key from Part 2 (it will not be shown as you paste it) |
-| Default region name | `us-west-2` |
+| Default region name | `us-east-1` |
 | Default output format | `json` |
 
 ### Step 3. Check the connection
@@ -117,10 +117,10 @@ You should get three lines back, and the `Arn` must end in `user/bedrock-cli-use
 
 ## Part 4. Check that Bedrock works from the CLI
 
-Your IAM user already has the Bedrock permission from Part 2. Recent Claude models on Bedrock are called through *inference profile IDs* that start with a geography such as `us.` or `global.`. First list the Claude profiles your account can see in `us-west-2`:
+Your IAM user already has the Bedrock permission from Part 2. Recent Claude models on Bedrock are called through *inference profile IDs* that start with a geography such as `us.` or `global.`. First list the Claude profiles your account can see in `us-east-1`:
 
 ```bash
-aws bedrock list-inference-profiles --region us-west-2 \
+aws bedrock list-inference-profiles --region us-east-1 \
   --query "inferenceProfileSummaries[?contains(inferenceProfileId,'claude')].inferenceProfileId" \
   --output table
 ```
@@ -128,7 +128,7 @@ aws bedrock list-inference-profiles --region us-west-2 \
 Choose one ID from your own table. Model lists change over time, so always copy from your own output. In this guide we use a small, low-cost model, `us.anthropic.claude-haiku-5-5`, to save your credits. Now send it a test message:
 
 ```bash
-aws bedrock-runtime converse --region us-west-2 \
+aws bedrock-runtime converse --region us-east-1 \
   --model-id us.anthropic.claude-haiku-5-5 \
   --messages '[{"role":"user","content":[{"text":"Say hello in one short line"}]}]'
 ```
@@ -171,13 +171,13 @@ It should print `strands ok`.
 
 ### Step 3. Create and run the test agent
 
-Strands defaults to a Claude Sonnet model in `us-west-2`. To stay on the low-cost model we already tested, the script below names the model and region explicitly. In VS Code create a file called `test_strands.py` with this content (or paste the block into the terminal):
+Strands defaults to a Claude Sonnet model in `us-east-1`. To stay on the low-cost model we already tested, the script below names the model and region explicitly. In VS Code create a file called `test_strands.py` with this content (or paste the block into the terminal):
 
 ```bash
 cat > test_strands.py << 'EOF'
 from strands import Agent
 from strands.models import BedrockModel
-model = BedrockModel(model_id="us.anthropic.claude-haiku-5-5", region_name="us-west-2")
+model = BedrockModel(model_id="us.anthropic.claude-haiku-5-5", region_name="us-east-1")
 agent = Agent(model=model)
 print(agent("Say hello in one short line"))
 EOF
@@ -197,7 +197,7 @@ python test_strands.py
 | `Unable to locate credentials` | The CLI has no key yet. Run `aws configure`, then `aws configure list` to see what it found. |
 | `InvalidClientTokenId` or `SignatureDoesNotMatch` | The key was mistyped or partly copied. Re-run `aws configure`. If the secret is lost, create a new key in IAM and delete the old one. |
 | `AccessDenied` that is not the verification message | Open IAM, then Users, then `bedrock-cli-user`, then Permissions, and confirm `AmazonBedrockFullAccess` is attached directly. |
-| `ValidationException`, invalid model ID, or model not available | Copy the ID exactly from your own `list-inference-profiles` table, and keep `--region us-west-2` on every command. If the console asks you to accept a one-time model use-case form, complete it in the Bedrock console and retry. |
+| `ValidationException`, invalid model ID, or model not available | Copy the ID exactly from your own `list-inference-profiles` table, and keep `--region us-east-1` on every command. If the console asks you to accept a one-time model use-case form, complete it in the Bedrock console and retry. |
 | `aws: command not found` | Close and reopen the terminal. If it persists, reinstall using the other method in Part 3. |
 | pip says `externally-managed-environment` | You are outside a virtual environment. Run `source .venv/bin/activate` and install again. |
 | `(.venv)` is missing from the prompt | Run `source .venv/bin/activate` from the folder that contains `.venv`. |
