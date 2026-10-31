@@ -8,11 +8,11 @@
 ## Architecture
 
 ```
-trip_09_mcp_client_demo.py  OR  trip_10_mcp_agent.py
+nb_trip_09_mcp_client_demo.py  OR  nb_trip_10_mcp_agent.py
         │
         │  subprocess.Popen  (stdio transport)
         ▼
-trip_08_mcp_server.py
+nb_trip_08_mcp_server.py
 ┌───────────────────────────────────────┐
 │  SQLite DB          ChromaDB KB       │
 │  (places/stays/costs)  (8 tips)       │
@@ -39,7 +39,7 @@ Gradio ChatInterface  →  http://localhost:7860
 | **stdio** | Client spawns server as subprocess; JSON-RPC over stdin/stdout pipes | Same machine — no network needed |
 | SSE/HTTP | Client connects to a URL | Remote server on cloud/container |
 
-Trip Buddy uses **stdio**. The client launches `trip_08_mcp_server.py` via `subprocess.Popen` using the same Python interpreter (`sys.executable`). All JSON-RPC 2.0 messages are framed with `Content-Length` headers — the MCP SDK handles this automatically; you never write the wire format by hand.
+Trip Buddy uses **stdio**. The client launches `nb_trip_08_mcp_server.py` via `subprocess.Popen` using the same Python interpreter (`sys.executable`). All JSON-RPC 2.0 messages are framed with `Content-Length` headers — the MCP SDK handles this automatically; you never write the wire format by hand.
 
 ### Message sequence
 ```
@@ -69,7 +69,7 @@ langchain-mcp-adapters
 
 ---
 
-## trip_08_mcp_server.py — Solution
+## nb_trip_08_mcp_server.py — Solution
 
 ### Structure
 ```
@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
 ---
 
-## trip_09_mcp_client_demo.py — Solution
+## nb_trip_09_mcp_client_demo.py — Solution
 
 **Purpose:** Verify the server works end-to-end before wiring the LLM. No OpenAI key needed.
 
@@ -141,7 +141,7 @@ import sys
 SERVER_CONFIG = {
     "trip-buddy": {
         "command":   sys.executable,             # same Python that runs this file
-        "args":      ["trip_08_mcp_server.py"],  # server script path
+        "args":      ["nb_trip_08_mcp_server.py"],  # server script path
         "transport": "stdio",                    # local — no URL
     }
 }
@@ -179,13 +179,13 @@ result = await tool_map["get_travel_tips"].ainvoke(
 
 ### How to run
 ```bash
-uv run trip_09_mcp_client_demo.py
+uv run nb_trip_09_mcp_client_demo.py
 # no OPENAI_API_KEY needed
 ```
 
 ---
 
-## trip_10_mcp_agent.py — Solution
+## nb_trip_10_mcp_agent.py — Solution
 
 **Purpose:** Full MCP client agent with LLM loop + Gradio UI.
 
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 ### How to run
 ```bash
 cp .env.example .env    # paste OPENAI_API_KEY
-uv run trip_10_mcp_agent.py
+uv run nb_trip_10_mcp_agent.py
 # → open http://localhost:7860
 ```
 

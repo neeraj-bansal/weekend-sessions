@@ -96,9 +96,9 @@ The client agent must not import `sqlite3`, `chromadb`, or `sentence_transformer
 
 | File | Purpose |
 |------|---------|
-| `trip_08_mcp_server.py` | MCP server — data + tools |
-| `trip_09_mcp_client_demo.py` | Connection / handshake / tool listing demo (no LLM) |
-| `trip_10_mcp_agent.py` | Full MCP client agent + Gradio UI |
+| `nb_trip_08_mcp_server.py` | MCP server — data + tools |
+| `nb_trip_09_mcp_client_demo.py` | Connection / handshake / tool listing demo (no LLM) |
+| `nb_trip_10_mcp_agent.py` | Full MCP client agent + Gradio UI |
 
 ---
 

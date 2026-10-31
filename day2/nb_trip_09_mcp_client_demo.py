@@ -1,10 +1,10 @@
 """
-trip_09_mcp_client_demo.py
-──────────────────────────
+nb_trip_09_mcp_client_demo.py
+─────────────────────────────
 Lesson 09 · MCP Client: connect, handshake, list tools, and call each one.
 
 The story
-    trip_08 is the server — it owns the DB, the knowledge base, and the tools.
+    nb_trip_08 is the server — it owns the DB, the knowledge base, and the tools.
     This file is the CLIENT. It knows nothing about SQLite or ChromaDB.
     It connects to the server, asks "what tools do you have?", gets the list,
     and calls each tool directly to see what it returns.
@@ -18,10 +18,10 @@ What you learn
     Step 3 — LIST TOOLS  : how the client discovers every tool the server exposes
     Step 4 — CALL TOOLS  : how to invoke each tool and inspect the result
 
-    This is the building block for trip_10 (the full MCP agent + Gradio UI).
+    This is the building block for nb_trip_10 (the full MCP agent + Gradio UI).
 
 How to run
-    uv run trip_09_mcp_client_demo.py
+    uv run nb_trip_09_mcp_client_demo.py
     (no API key needed — we are NOT calling the LLM yet, only the MCP server)
 
 What you will see
@@ -46,12 +46,12 @@ import sys
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 # ── Server config ─────────────────────────────────────────────────────────────
-# We tell the client to launch trip_08_mcp_server.py as a subprocess.
+# We tell the client to launch nb_trip_08_mcp_server.py as a subprocess.
 # stdio transport = the client writes to the server's stdin and reads from stdout.
 SERVER_CONFIG = {
     "trip-buddy": {
-        "command": sys.executable,          # same Python that is running this file
-        "args":    ["trip_08_mcp_server.py"],
+        "command": sys.executable,              # same Python that is running this file
+        "args":    ["nb_trip_08_mcp_server.py"],
         "transport": "stdio",
     }
 }
@@ -135,7 +135,7 @@ async def main() -> None:
         print(result)
 
         print(f"\n{sep}")
-        print("All tools called successfully. Server is ready for trip_10 (full agent).")
+        print("All tools called successfully. Server is ready for nb_trip_10 (full agent).")
         print(sep)
 
 

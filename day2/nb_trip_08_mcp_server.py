@@ -1,6 +1,6 @@
 """
-trip_08_mcp_server.py
-─────────────────────
+nb_trip_08_mcp_server.py
+────────────────────────
 Lesson 08 · MCP Server: expose Trip Buddy's tools over the Model Context Protocol.
 
 The story
