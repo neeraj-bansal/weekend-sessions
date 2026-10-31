@@ -51,7 +51,27 @@ def run_llm_inference(
         except Exception as e:
             logger.warning("Groq inference error, attempting fallback: %s", str(e))
 
-    # 2. Try OpenAI if OPENAI_API_KEY is available
+    # 2. Try AWS Bedrock (Bedrock Converse API supports Nova, Claude, Llama, Mistral)
+    try:
+        import boto3
+
+        region = os.getenv("AWS_REGION", "us-east-1")
+        bedrock_client = boto3.client("bedrock-runtime", region_name=region)
+        model_id = os.getenv("BEDROCK_MODEL_ID", "us.amazon.nova-2-lite-v1:0")
+
+        converse_response = bedrock_client.converse(
+            modelId=model_id,
+            system=[{"text": system_prompt}],
+            messages=[{"role": "user", "content": [{"text": user_prompt}]}],
+            inferenceConfig={"maxTokens": 2048, "temperature": 0.1},
+        )
+        output_msg = converse_response.get("output", {}).get("message", {}).get("content", [])
+        if output_msg and "text" in output_msg[0]:
+            return output_msg[0]["text"]
+    except Exception as e:
+        logger.warning("Bedrock inference error: %s", str(e))
+
+    # 3. Try OpenAI if OPENAI_API_KEY is available
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if openai_api_key and openai_api_key.strip():
         try:
@@ -74,28 +94,6 @@ def run_llm_inference(
             return completion.choices[0].message.content or ""
         except Exception as e:
             logger.warning("OpenAI inference error, attempting fallback: %s", str(e))
-
-    # 3. Try AWS Bedrock if credentials are configured
-    if os.getenv("AWS_ACCESS_KEY_ID") and os.getenv("AWS_SECRET_ACCESS_KEY"):
-        try:
-            import boto3
-
-            region = os.getenv("AWS_REGION", "us-east-1")
-            bedrock_client = boto3.client("bedrock-runtime", region_name=region)
-            model_id = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-haiku-20241022-v1:0")
-
-            body = json.dumps({
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 2048,
-                "system": system_prompt,
-                "messages": [{"role": "user", "content": [{"type": "text", "text": user_prompt}]}],
-                "temperature": 0.1,
-            })
-            resp = bedrock_client.invoke_model(modelId=model_id, body=body)
-            resp_body = json.loads(resp["body"].read().decode("utf-8"))
-            return resp_body.get("content", [{}])[0].get("text", "")
-        except Exception as e:
-            logger.warning("Bedrock inference error: %s", str(e))
 
     # 4. Fallback: Return raw contextual synthesis without external API
     logger.info("Using built-in synthesis fallback.")
