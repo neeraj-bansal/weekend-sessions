@@ -1,0 +1,19 @@
+[project]
+name = "section2"
+version = "0.1.0"
+requires-python = ">=3.15"
+dependencies = [
+    "langchain>=1.4.7",
+    "langchain-core>=1.7.0",
+    "langchain-openai>=1.7.2",
+    "langchain-tavily>=0.2.18",
+    "pydantic>=2.14.1",
+    "python-dotenv>=1.2.4",
+    "tavily-python>=0.8.5",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1",
+    "isort>=6.0",
+]
